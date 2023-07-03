@@ -3,6 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 
 def get_place_names(url):
     options = webdriver.ChromeOptions()
@@ -15,7 +16,13 @@ def get_place_names(url):
     driver.get(url)
 
     wait = WebDriverWait(driver, 10)
-    place_names = wait.until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "mw-collection-place-name")))
+
+    while True:
+        try:
+            place_names = wait.until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "mw-collection-place-name")))
+            break
+        except StaleElementReferenceException:
+            pass
 
     place_names = [name.text for name in place_names]
 
