@@ -30,5 +30,9 @@ if __name__ == "__main__":
 
     place_names = get_place_names(args.url)
 
-    with open("place_names.txt", "w") as file:
-        file.write("\n".join(place_names))
+    try:
+        with open("place_names.txt", "w") as file:
+            file.write("\n".join(place_names))
+        print("Place names saved to place_names.txt")
+    except IOError:
+        print("An error occurred while writing to the file.")
