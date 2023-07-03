@@ -29,4 +29,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     place_names = get_place_names(args.url)
-    print(place_names)
+
+    with open("place_names.txt", "w") as file:
+        file.write("\n".join(place_names))
