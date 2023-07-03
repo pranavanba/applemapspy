@@ -30,6 +30,8 @@ if __name__ == "__main__":
 
     place_names = get_place_names(args.url)
 
+    place_names = list(set(place_names))
+
     try:
         with open("place_names.txt", "w") as file:
             file.write("\n".join(place_names))
