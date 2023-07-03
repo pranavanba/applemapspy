@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException
+import time
 
 def get_place_names(url):
     options = webdriver.ChromeOptions()
@@ -16,19 +17,20 @@ def get_place_names(url):
     driver.get(url)
 
     wait = WebDriverWait(driver, 10)
+    retries = 3
 
-    while True:
+    while retries > 0:
         try:
             place_name_elements = wait.until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "mw-collection-place-name")))
-            break
+            place_names = [element.get_attribute("innerText") for element in place_name_elements]
+            driver.quit()
+            return place_names
         except StaleElementReferenceException:
-            pass
-
-    place_names = [element.get_attribute("innerText") for element in place_name_elements]
+            retries -= 1
+            time.sleep(1)  # Wait for a short duration before retrying
 
     driver.quit()
-
-    return place_names
+    return []
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
