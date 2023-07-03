@@ -17,20 +17,23 @@ def get_place_names(url):
     driver.get(url)
 
     wait = WebDriverWait(driver, 10)
-    retries = 3
 
-    while retries > 0:
-        try:
-            place_name_elements = wait.until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "mw-collection-place-name")))
-            place_names = [element.get_attribute("innerText") for element in place_name_elements]
-            driver.quit()
-            return place_names
-        except StaleElementReferenceException:
-            retries -= 1
-            time.sleep(1)  # Wait for a short duration before retrying
+    last_height = driver.execute_script("return document.body.scrollHeight")
+    while True:
+        driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        time.sleep(2)
+        new_height = driver.execute_script("return document.body.scrollHeight")
+        if new_height == last_height:
+            break
+        last_height = new_height
+
+    place_name_elements = wait.until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "mw-collection-place-name")))
+
+    place_names = [element.get_attribute("innerText") for element in place_name_elements]
 
     driver.quit()
-    return []
+
+    return place_names
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
