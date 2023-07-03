@@ -19,12 +19,12 @@ def get_place_names(url):
 
     while True:
         try:
-            place_names = wait.until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "mw-collection-place-name")))
+            place_name_elements = wait.until(EC.visibility_of_all_elements_located((By.CLASS_NAME, "mw-collection-place-name")))
             break
         except StaleElementReferenceException:
             pass
 
-    place_names = [name.text for name in place_names]
+    place_names = [element.get_attribute("innerText") for element in place_name_elements]
 
     driver.quit()
 
